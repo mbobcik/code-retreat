@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace C_sharp
 {
@@ -24,7 +25,7 @@ namespace C_sharp
             {
                 for (int j = 0; j < world.GetLength(1); j++)
                 {
-                    newWorld[i,j]= SolveMatrix(i, j);
+                    newWorld[i,j] = SolveMatrix(i, j);
                 }
             }
             world = newWorld;
@@ -65,11 +66,12 @@ namespace C_sharp
 
         public void RandomWorld()
         {
+            Random r = new Random();
             for (int i = 0; i < world.GetLength(0); i++)
             {
                 for (int j = 0; j < world.GetLength(1); j++)
                 {
-
+                    world[i, j] = Convert.ToBoolean( r.Next(0, 2));
                 }
             }
         }
@@ -87,10 +89,10 @@ namespace C_sharp
                 for (int j = 0; j < world.GetLength(1); j++)
                 {
                     if (world[i, j])
-                        Console.Write("* ");
+                        Console.Write("# ");
                     else
                     {
-                        Console.Write("# ");
+                        Console.Write(". ");
                     }
                 }
                 Console.WriteLine();
@@ -104,13 +106,19 @@ namespace C_sharp
         static void Main(string[] args)
         {
             Game g = new Game(10);
-            g.NewWorld1();
+            g.RandomWorld();
             g.PrintWorld();
-            g.Tick();
-            g.PrintWorld();
+            char c = 'c';
+            int runNo = 0;
 
-
-
+            while (c!= 'q')
+            {
+                g.Tick();
+                g.PrintWorld();
+                Console.WriteLine("Tick number: {0}", ++runNo);
+                c = Convert.ToChar(Console.Read());
+                Thread.Sleep(30);
+            }
 
             Console.ReadLine();
         }
