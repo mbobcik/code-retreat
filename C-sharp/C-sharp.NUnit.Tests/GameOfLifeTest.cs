@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using C_sharp;
 
 namespace C_sharp.NUnit.Tests
 {
@@ -10,9 +11,9 @@ namespace C_sharp.NUnit.Tests
     class GameOfLifeTest
     {
          [Test]
-        public void GameOfLife_SampleTest()
-         {
-             Assert.That(true, Is.True);
-         }
+        public void GameObbbbfLife_SampleTest()
+        { 
+            
+        }
     }
 }
