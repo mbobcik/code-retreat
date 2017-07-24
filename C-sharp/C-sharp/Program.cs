@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,25 +11,48 @@ namespace C_sharp
     class Game
     {
         bool[,] world;
-        bool[,] newWorld;
+        //bool[,] newWorld;
 
         public Game(int size)
         {
             world = new bool[size, size];
         }
 
+        public Game(int size, int choice)
+        {
+            world = new bool[size, size];
+            switch (choice)
+            {
+                case 0:
+                    RandomWorld();
+                    break;
+                case 1:
+                    this.NewWorld1();
+                    break;
+                case 2:
+                    this.NewWorld2();
+                    break;
+                case 3:
+                    this.NewWorld3();
+                    break;
+                case 4:
+                    this.NewWorld4();
+                    break;
+            }
+        }
+
         public void Tick()
         {
-            newWorld = new bool[world.GetLength(0), world.GetLength(1)];
+            bool[,] newWorld = new bool[world.GetLength(0), world.GetLength(1)];
 
             for (int i = 0; i < world.GetLength(0); i++)
             {
                 for (int j = 0; j < world.GetLength(1); j++)
                 {
-                    newWorld[i,j] = SolveMatrix(i, j);
+                    newWorld[i, j] = SolveMatrix(i, j);
                 }
             }
-            world = newWorld;
+            world = (bool[,])newWorld.Clone();
         }
 
         private bool SolveMatrix(int i, int j)
@@ -47,21 +71,18 @@ namespace C_sharp
                 }
             }
 
-            if (world[i, j])
-            {
-                if (lifeCount < 2)
-                    return false;
-                else if (lifeCount >= 2 && lifeCount <= 3)
-                    return true;
-                else
-                    return false;
-            }
-            else
-            {
-                if (lifeCount == 3)
-                    return true;
+            return Rules(lifeCount, world[i, j]);
+        }
+
+        public bool Rules(int livingCount, bool isAlive)
+        {
+            if (livingCount < 2)
                 return false;
-            }
+            else if (isAlive && (livingCount == 2 || livingCount == 3))
+                return true;
+            else if (!isAlive && livingCount == 3)
+                return true;
+            return false;
         }
 
         public void RandomWorld()
@@ -71,15 +92,33 @@ namespace C_sharp
             {
                 for (int j = 0; j < world.GetLength(1); j++)
                 {
-                    world[i, j] = Convert.ToBoolean( r.Next(0, 2));
+                    world[i, j] = Convert.ToBoolean(r.Next(0, 2));
                 }
             }
         }
 
+
+        private void NewWorld4()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void NewWorld3()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void NewWorld2()
+        {
+            throw new NotImplementedException();
+        }
+
+        // # .       . .
+        // . #   =>  . .
         public void NewWorld1()
         {
             world[0, 0] = true;
-            world[1, 1] = true; 
+            world[1, 1] = true;
         }
 
         public void PrintWorld()
@@ -105,22 +144,40 @@ namespace C_sharp
     {
         static void Main(string[] args)
         {
-            Game g = new Game(10);
+            TextWriter stderr = Console.Error;
+            Game g;
+
+            try {
+                Console.Write("select option:");
+                int option = int.Parse(Console.ReadLine());
+                g = new Game(10, option);
+            }catch(Exception e){
+                stderr.WriteLine(e);
+                g = new Game(10);
+            }
+
             g.RandomWorld();
             g.PrintWorld();
+
             char c = 'c';
             int runNo = 0;
 
-            while (c!= 'q')
+            while (c != 'q')
             {
                 g.Tick();
                 g.PrintWorld();
                 Console.WriteLine("Tick number: {0}", ++runNo);
-                c = Convert.ToChar(Console.Read());
-                Thread.Sleep(30);
+                Thread.Sleep(300);
+                try
+                {
+                    c = Convert.ToChar(Console.ReadLine());
+                }
+                catch (Exception e)
+                {
+                    stderr.WriteLine(e);
+                    c = 's';
+                }
             }
-
-            Console.ReadLine();
         }
     }
 }
